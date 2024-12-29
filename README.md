@@ -76,7 +76,7 @@ DocCure is a modern healthcare appointment booking system that connects patients
 1. Clone the repository
 
 bash
-git clone https://github.com/manjurulhoque/doccure.git
+git clone https://github.com/sudha-1290/patient-appointment.git
 cd doccure
 
 2. Create a virtual environment
