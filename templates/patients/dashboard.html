@@ -1,0 +1,123 @@
+{% extends 'includes/patient-sidebar.html' %}
+
+{% block page_name1 %}Dashboard{% endblock %}
+{% block page_name2 %}Dashboard{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-body pt-0">
+            <!-- Tab Menu -->
+            <nav class="user-tabs mb-4">
+                <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#pat_appointments" data-toggle="tab">Appointments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pat_prescriptions" data-toggle="tab">Prescriptions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pat_medical_records" data-toggle="tab">Medical Records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pat_billing" data-toggle="tab">Billing</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /Tab Menu -->
+
+            <!-- Tab Content -->
+            <div class="tab-content pt-0">
+                <!-- Appointment Tab -->
+                <div id="pat_appointments" class="tab-pane fade show active">
+                    <div class="card card-table mb-0">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-center mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th>Doctor</th>
+                                            <th>Appointment Date</th>
+                                        <th>Booking Date</th>
+                                        <th>Status</th>
+                                            <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for appointment in appointments %}
+                                    <tr>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                    <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}" class="avatar avatar-sm mr-2">
+                                                        <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Doctor Image">
+                                                    </a>
+                                                    <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}">
+                                                        Dr. {{ appointment.doctor.get_full_name }}
+                                                        {% if appointment.doctor.profile.specialization %}
+                                                            <span>{{ appointment.doctor.profile.specialization }}</span>
+                                                        {% endif %}
+                                                    </a>
+                                            </h2>
+                                        </td>
+                                            <td>
+                                                {{ appointment.appointment_date }}
+                                                <span class="d-block text-info">
+                                                    {{ appointment.appointment_time|time:"h:i A" }}
+                                                </span>
+                                            </td>
+                                            <td>{{ appointment.booking_date|date:"d M Y" }}</td>
+                                            <td>
+                                                <span class="badge badge-pill 
+                                                    {% if appointment.status == 'confirmed' %}bg-success-light{% endif %}
+                                                    {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
+                                                    {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
+                                                    {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
+                                                    {{ appointment.status|title }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                            <div class="table-action">
+                                                    {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+                                                        <form method="post" action="{% url 'patients:appointment-cancel' appointment.pk %}" style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-sm bg-danger-light" onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                                                <i class="fas fa-times"></i> Cancel
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    <a href="{% url 'patients:appointment-detail' appointment.pk %}" class="btn btn-sm bg-info-light">
+                                                        <i class="far fa-eye"></i> View
+                                                    </a>
+                                                    <a href="{% url 'patients:appointment-print' appointment.pk %}" target="_blank" class="btn btn-sm bg-primary-light">
+                                                    <i class="fas fa-print"></i> Print
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">No appointments found</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Appointment Tab -->
+
+                <!-- Other tabs remain unchanged -->
+                <div class="tab-pane fade" id="pat_prescriptions">
+                    <!-- Prescription content -->
+                </div>
+                <div class="tab-pane fade" id="pat_medical_records">
+                    <!-- Medical Records content -->
+                </div>
+                <div class="tab-pane fade" id="pat_billing">
+                    <!-- Billing content -->
+                </div>
+            </div>
+            <!-- /Tab Content -->
+        </div>
+    </div>
+{% endblock %}
